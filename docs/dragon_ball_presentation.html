@@ -1,0 +1,171 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación de Dragon Ball</title>
+    <style>
+        body {
+            font-family: 'Anime Ace', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298); /* Fondo inspirado en el cielo de Dragon Ball */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #ff6200; /* Naranja icónico de Dragon Ball */
+            border-bottom: 5px solid #ffd700; /* Borde dorado como el Super Saiyan */
+        }
+        h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #ffd700;
+            text-shadow: 3px 3px 5px #000;
+        }
+        section {
+            padding: 40px;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .seccion1 {
+            border: 3px solid #ffd700; /* Dorado para Goku */
+        }
+        .seccion2 {
+            border: 3px solid #4b0082; /* Púrpura para Vegeta */
+        }
+        .seccion3 {
+            border: 3px solid #228b22; /* Verde para Gohan */
+        }
+        h2 {
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px #000;
+        }
+        .seccion1 h2 { color: #ffd700; }
+        .seccion2 h2 { color: #4b0082; }
+        .seccion3 h2 { color: #228b22; }
+        img {
+            max-width: 500px;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            transition: transform 0.3s;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        p {
+            font-size: 1.2em;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        ul {
+            text-align: left;
+            max-width: 700px;
+            font-size: 1.1em;
+        }
+        li {
+            margin: 10px 0;
+        }
+        @font-face {
+            font-family: 'Anime Ace';
+            src: url('https://fonts.cdnfonts.com/css/anime-ace');
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dragon Ball: Los Saiyans</h1>
+        <p>Héroes Legendarios del Anime</p>
+    </header>
+
+    <section id="goku" class="seccion1">
+        <h2>Goku</h2>
+        <img src="images/goku.jpg" alt="Goku en Super Saiyan">
+        <p>Goku, conocido como Kakarotto, es el protagonista principal de Dragon Ball. Nacido en el planeta Vegeta, fue enviado a la Tierra siendo un bebé para conquistarla, pero un golpe en la cabeza cambió su destino, convirtiéndolo en un héroe puro. Criado por el abuelo Gohan, Goku se caracteriza por su bondad, valentía y pasión por las peleas.</p>
+        <ul>
+            <li><strong>Transformaciones</strong>: Super Saiyan, Super Saiyan Dios, Super Saiyan Blue, Ultra Instinto.</li>
+            <li><strong>Habilidades clave</strong>: Kamehameha, Genki Dama, Kaioken.</li>
+            <li><strong>Momentos icónicos</strong>: Derrotó a Freezer en Namek, salvó la Tierra de Cell, enfrentó a Beerus.</li>
+        </ul>
+    </section>
+
+    <section id="vegeta" class="seccion2">
+        <h2>Vegeta</h2>
+        <img src="images/vegeta.jpg" alt="Vegeta en armadura Saiyan">
+        <p>Vegeta, el príncipe de los Saiyans, comienza como un villano orgulloso y arrogante, pero evoluciona hasta convertirse en un aliado clave de Goku. Originario del planeta Vegeta, su obsesión por superar a Goku lo lleva a alcanzar grandes poderes, aunque también desarrolla un lado protector hacia su familia y la Tierra.</p>
+        <ul>
+            <li><strong>Transformaciones</strong>: Super Saiyan, Majin Vegeta, Super Saiyan Blue, Ultra Ego.</li>
+            <li><strong>Habilidades clave</strong>: Galick Gun, Final Flash, Big Bang Attack.</li>
+            <li><strong>Momentos icónicos</strong>: Sacrificio contra Majin Buu, alianza con Goku contra Jiren.</li>
+        </ul>
+    </section>
+
+    <section id="gohan" class="seccion3">
+        <h2>Gohan</h2>
+        <img src="images/gohan.jpg" alt="Gohan en Super Saiyan 2">
+        <p>Gohan, hijo de Goku y Chi-Chi, es un guerrero con un potencial inmenso. A pesar de su naturaleza pacífica y su inclinación por los estudios, Gohan se convierte en un luchador formidable cuando sus seres queridos están en peligro. Su papel en la saga de Cell marcó un hito en la serie.</p>
+        <ul>
+            <li><strong>Transformaciones</strong>: Super Saiyan, Super Saiyan 2, Forma Definitiva (Ultimate Gohan).</li>
+            <li><strong>Habilidades clave</strong>: Masenko, Kamehameha, Explosión de Ira.</li>
+            <li><strong>Momentos icónicos</strong>: Derrota a Cell con el Kamehameha definitivo, liderazgo en el Torneo del Poder.</li>
+        </ul>
+    </section>
+</body>
+</html>
